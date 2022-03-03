@@ -1,5 +1,7 @@
 import React from 'react';
+import { useThree, useFrame } from "@react-three/fiber";
 import { useMediaQuery } from "react-responsive";
+import { CubeCamera, WebGLCubeRenderTarget, RGBFormat, LinearMipmapLinearFilter } from 'three';
 
 function Planet() {
   const isPc = useMediaQuery({
@@ -12,6 +14,18 @@ function Planet() {
     query : "(max-width:767px)"
   });
 
+  const cubeRenderTarget = new WebGLCubeRenderTarget(512, {
+    format: RGBFormat,
+    generateMipmaps: true,
+    minFilter: LinearMipmapLinearFilter
+  });
+  const { scene, gl } = useThree();
+  const cubeCamera = new CubeCamera(1, 1000, cubeRenderTarget);
+  cubeCamera.position.set(0, 0, 0);
+  scene.add(cubeCamera);
+
+  useFrame(() => cubeCamera.update(gl, scene));
+
   return (
     <mesh visible position={[0, 0, 0]} rotation={[0, 0, 0]} castShadow>
     <directionalLight intensity={0.5} />
@@ -21,6 +35,7 @@ function Planet() {
     
     <meshBasicMaterial
       attach="material"
+      envMap={cubeCamera.renderTarget.texture}
       color="white"
       roughness={0.1}
       metalness={1}
