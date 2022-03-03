@@ -1,5 +1,21 @@
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
+import { CubeTextureLoader } from "three";
 import { useMediaQuery } from "react-responsive";
+
+function Space() {
+  const { scene } = useThree();
+  const loader = new CubeTextureLoader;
+  const texture = loader.load([
+    "/space_01.jpg",
+    "/space_02.jpg",
+    "/space_03.jpg",
+    "/space_04.jpg",
+    "/space_05.jpg",
+    "/space_06.jpg"
+  ]);
+  scene.background = texture;
+  return null;
+}
 
 function Sphere() {
   const isPc = useMediaQuery({
@@ -32,6 +48,7 @@ function Sphere() {
 function App() {
   return ( 
     <Canvas>
+      <Space />
       <Sphere />
     </Canvas>
   )
